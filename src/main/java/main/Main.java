@@ -14,9 +14,11 @@ import java.util.Scanner;
 public class Main {
     
     public static void main(String[] args){
+        int WIDTH = 3;
+        int HEIGHT = 3;
         Scanner sc = new Scanner(System.in);
         char[] inputSymbols = sc.next().toCharArray();
-        Cell[][] table = new Cell[3][3];
+        Cell[][] table = new Cell[WIDTH][HEIGHT];
         int numOfChar = 0;
         for (Cell[] row : table) {
             for (int column = 0; column < row.length; column++) {
@@ -35,14 +37,18 @@ public class Main {
             }
         }
         printTable(table);
-        System.out.println(analyze(table).getString());
+        System.out.println(analyze(table, 3).getString());
     }
 
-    public static State analyze(Cell[][] table) {
-        //проверка возможности
+    public static State analyze(Cell[][] table, int len) {
+        //переменная LENGTH задаёт длину выигрышной комбинации
+        int LENGTH = len;
         int countCross = 0;
         int countZero = 0;
         int countEmpty = 0;
+        boolean xWins = false;
+        boolean oWins = false;
+        //проверка возможности
         for (Cell[] row : table) {
             for (Cell column : row) {
                 switch (column) {
@@ -61,53 +67,72 @@ public class Main {
         if (Math.abs(countZero-countCross) > 1){
             return State.IMPOSSIBLE;
         }
-        boolean xWins = false;
-        boolean oWins = false;
         //проверка по строкам
         for (Cell[] row : table) {
-            if (!Cell.EMPTY.equals(row[0])) {
-                if (row[0].equals(row[1]) && row[1].equals(row[2])) {
-                    if (Cell.CROSS.equals(row[0])) {
+            for (int element = 0; element < row.length - LENGTH + 1; element++) {
+                if (!Cell.EMPTY.equals(row[element])) {
+                    boolean isSame = true;
+                    for (int count = 1; count < LENGTH; count++) {
+                        isSame = isSame && row[element].equals(row[element + count]);
+                    }
+                    if (isSame && Cell.CROSS.equals(row[element])){
                         xWins = true;
-                    } else {
+                    }
+                    else if (isSame && Cell.ZERO.equals(row[element])){
                         oWins = true;
                     }
                 }
             }
         }
         //проверка по столбцам
-        for (int column = 0; column < 3; column++) {
-            //for (Cell[] row : table) {
-            if (!Cell.EMPTY.equals(table[0][column])) {
-                if (table[0][column].equals(table[1][column]) && table[1][column].equals(table[2][column])) {
-                    if (Cell.CROSS.equals(table[0][column])) {
+        for (int element = 0; element < 3; element++) {//!!!!
+            for (int row = 0; row < table.length - LENGTH + 1; row++) {
+                if (!Cell.EMPTY.equals(table[row][element])) {
+                    boolean isSame = true;
+                    for (int count = 1; count < LENGTH; count++) {
+                        isSame = isSame && table[row][element].equals(table[row+count][element]);
+                    }
+                    if (isSame && Cell.CROSS.equals(table[row][element])){
                         xWins = true;
-                    } else {
+                    }
+                    else if (isSame && Cell.ZERO.equals(table[row][element])){
                         oWins = true;
                     }
                 }
             }
         }
         //проверка по диагоналям
-        if (!Cell.EMPTY.equals(table[0][0])) {
-            if (table[0][0].equals(table[1][1]) && table[2][2].equals(table[1][1])) {
-                if (Cell.CROSS.equals(table[0][0])) {
-                    xWins = true;
-                } else {
-                    oWins = true;
+        for (int row = 0; row < table.length - LENGTH + 1; row++) {
+            for (int element = 0; element < table[row].length - LENGTH; element++) {
+                if (!Cell.EMPTY.equals(table[row][element])) {
+                    boolean isSame = true;
+                    for (int count = 1; count < LENGTH; count++) {
+                        isSame = isSame && table[row][element].equals(table[row + count][element + count]);
+                    }
+                    if (isSame && Cell.CROSS.equals(table[row][element])) {
+                        xWins = true;
+                    } else if (isSame && Cell.ZERO.equals(table[row][element])) {
+                        oWins = true;
+                    }
                 }
             }
         }
-        if (!Cell.EMPTY.equals(table[0][2])) { //0;2 угол? переписать бы алгоритм
-            if (table[0][2].equals(table[1][1]) && table[2][0].equals(table[1][1])) {
-                if (Cell.CROSS.equals(table[0][2])) {
-                    xWins = true;
-                } else {
-                    oWins = true;
+        for (int row = 0; row < table.length - LENGTH + 1; row++) {
+            for (int element = table[row].length - 1; element > LENGTH - 2; element--) {
+                if (!Cell.EMPTY.equals(table[row][element])) {
+                    boolean isSame = true;
+                    for (int count = 1; count < LENGTH; count++) {
+                        isSame = isSame && table[row][element].equals(table[row + count][element - count]);
+                    }
+                    if (isSame && Cell.CROSS.equals(table[row][element])) {
+                        xWins = true;
+                    } else if (isSame && Cell.ZERO.equals(table[row][element])) {
+                        oWins = true;
+                    }
                 }
             }
         }
-        if(xWins && oWins){
+        if (xWins && oWins) {
             return State.IMPOSSIBLE;
         }
         else if(xWins){
