@@ -5,7 +5,6 @@
  */
 package main;
 
-import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -16,13 +15,37 @@ import java.util.Scanner;
 public class Main {
     
     public static void main(String[] args){
-        int WIDTH = 3;
-        int HEIGHT = 3;
-        //построение таблицы по заданным значениям
-        System.out.print("Enter cells: ");
+        Cell[][] table = createTable("_________", 3, 3);
+        printTable(table);
+        boolean isXMove = true;
+        while (!analyze(table, 3).isFinal()) {
+            //добавление символа в таблицу
+            boolean isSetted = false;
+            while (!isSetted) {
+                int[] coordinates = readTwoNumbersFromString(1, 3);
+                int x = coordinates[0];
+                int y = coordinates[1];
+                if (isXMove) {
+                    if (setElementToTable(table, Cell.CROSS, x, y) != null) {
+                        isSetted = true;
+                        isXMove = false;
+                    }
+                }
+                else{
+                    if (setElementToTable(table, Cell.ZERO, x, y) != null) {
+                        isSetted = true;
+                        isXMove = true;
+                    }
+                }
+            }
+            printTable(table);
+        }
+        System.out.println(analyze(table, 3).getString());
+    }
+
+    public static Cell[][] createTable(String str, int WIDTH, int HEIGHT){
         Cell[][] table;
-        Scanner sc = new Scanner(System.in);
-        char[] inputSymbols = sc.next().toCharArray();
+        char[] inputSymbols = str.toCharArray();
         table = new Cell[WIDTH][HEIGHT];
         int numOfChar = 0;
         for (Cell[] row : table) {
@@ -41,21 +64,9 @@ public class Main {
                 numOfChar++;
             }
         }
-        printTable(table);
-        //System.out.println(analyze(table, 3).getString());
-        //добавление символа в таблицу
-        boolean isSetted = false;
-        while (!isSetted) {
-            int[] coordinates = readTwoNumbersFromString(1, 3);
-            int x = coordinates[0];
-            int y = coordinates[1];
-            if(setElementToTable(table, Cell.CROSS, x, y) != null){
-                isSetted = true;
-            }
-        }
-        printTable(table);
+        return table;
     }
-
+    
     public static int[] readTwoNumbersFromString(int lowerLimit, int upperLimit) {
         Scanner sc = new Scanner(System.in);
         int[] numbers = new int[2];
@@ -90,8 +101,6 @@ public class Main {
         if (!Cell.EMPTY.equals(table[row][column])) {
             System.out.println("This cell is occupied! Choose another one!");
             return null;
-            //спросить координаты ещё раз
-            //мб выделить считывание координат в отдельный метод?
         }
         else{
             table[row][column] = element;
@@ -192,17 +201,22 @@ public class Main {
             }
         }
         if (xWins && oWins) {
+            System.out.println("impossible");
             return State.IMPOSSIBLE;
         }
         else if(xWins){
+            System.out.println("x wins");
             return State.XWINS;
         }
         else if(oWins){
+            System.out.println("o wins");
             return State.OWINS;
         }
         else if(countEmpty == 0){
+            System.out.println("draw");
             return State.DRAW;
         }
+        System.out.println("gnotf");
         return State.GAMENOTFINISHED;
     }
 
