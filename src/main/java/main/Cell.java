@@ -6,13 +6,13 @@
 package main;
 
 /**
- *
- * @author Kraz
+ * Represents all possible elements of the playing field.
+ * @author Anastasia Belova
  */
 public enum Cell {
     CROSS('X'),
     ZERO('O'),
-    EMPTY('_');
+    EMPTY(' ');
     
     private char ch;
     

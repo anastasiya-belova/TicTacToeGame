@@ -10,16 +10,16 @@ import java.util.Scanner;
 
 /**
  *
- * @author Kraz
+ * @author Anastasia Belova
  */
 public class Main {
     
     public static void main(String[] args){
-        Cell[][] table = createTable("_________", 3, 3);
+        Cell[][] table = createTable("         ", 3, 3);
         printTable(table);
         boolean isXMove = true;
         while (!analyze(table, 3).isFinal()) {
-            //добавление символа в таблицу
+            //adding the element into the playing field
             boolean isSetted = false;
             while (!isSetted) {
                 int[] coordinates = readTwoNumbersFromString(1, 3);
@@ -43,6 +43,16 @@ public class Main {
         System.out.println(analyze(table, 3).getString());
     }
 
+    /**
+     * Create a new playing field according to the specified values of width and height,
+     * as well as filled in in accordance with the transmitted string. For example, 
+     * when WIDTH = 3, HEIGHT = 3, str = "XO X OOXX", the constructed table will look
+     * like this: (X O  )(X   O)(O X X)
+     * @param str
+     * @param WIDTH
+     * @param HEIGHT
+     * @return a new playing field
+     */
     public static Cell[][] createTable(String str, int WIDTH, int HEIGHT){
         Cell[][] table;
         char[] inputSymbols = str.toCharArray();
@@ -67,6 +77,13 @@ public class Main {
         return table;
     }
     
+    /**
+     * Returns two int numbers belonging to the interval from lowerLimit to upperLimit.
+     * Numbers are read from System.in with the use java.util.Scanner.
+     * @param lowerLimit
+     * @param upperLimit
+     * @return two int numbers belonging to the interval from lowerLimit to upperLimit
+     */
     public static int[] readTwoNumbersFromString(int lowerLimit, int upperLimit) {
         Scanner sc = new Scanner(System.in);
         int[] numbers = new int[2];
@@ -95,6 +112,16 @@ public class Main {
         return numbers;
     }
 
+    /**
+     * Sets element to table to the location with the specified coordinates. NB!
+     * The coordinate values are not equal to the numbering of the elements in the array.
+     * Line numbering starts at the bottom with 1. Column numbering starts on the left with 1.
+     * @param table
+     * @param element
+     * @param xCoordinate
+     * @param yCoordinate
+     * @return table with new element
+     */
     public static Cell[][] setElementToTable(Cell[][] table, Cell element, int xCoordinate, int yCoordinate) {
         int row = table.length - yCoordinate;
         int column = xCoordinate - 1;
@@ -108,15 +135,23 @@ public class Main {
         return table;
     }
 
+    /**
+     * Searches for whether there are winning combinations on the playing field, 
+     * checks the possibility of this combination appearing on the playing field.
+     * Returns the corresponding state of the playing field.
+     * @param table
+     * @param len
+     * @see State
+     * @return state of the playing field
+     */
     public static State analyze(Cell[][] table, int len) {
-        //переменная LENGTH задаёт длину выигрышной комбинации
+        //the variable LENGTH specified the length of the winning combination
         int LENGTH = len;
         int countCross = 0;
         int countZero = 0;
         int countEmpty = 0;
         boolean xWins = false;
         boolean oWins = false;
-        //проверка возможности
         for (Cell[] row : table) {
             for (Cell column : row) {
                 switch (column) {
@@ -132,10 +167,11 @@ public class Main {
                 }
             }
         }
+        //checking the possibility of this combination appearing on the playing field
         if (Math.abs(countZero-countCross) > 1){
             return State.IMPOSSIBLE;
         }
-        //проверка по строкам
+        //checking strings
         for (Cell[] row : table) {
             for (int element = 0; element < row.length - LENGTH + 1; element++) {
                 if (!Cell.EMPTY.equals(row[element])) {
@@ -152,8 +188,8 @@ public class Main {
                 }
             }
         }
-        //проверка по столбцам
-        for (int element = 0; element < table[0].length; element++) {//тут не очень
+        //checking columns
+        for (int element = 0; element < table[0].length; element++) {
             for (int row = 0; row < table.length - LENGTH + 1; row++) {
                 if (!Cell.EMPTY.equals(table[row][element])) {
                     boolean isSame = true;
@@ -169,9 +205,9 @@ public class Main {
                 }
             }
         }
-        //проверка по диагоналям
+        //checking diagonals
         for (int row = 0; row < table.length - LENGTH + 1; row++) {
-            for (int element = 0; element < table[row].length - LENGTH; element++) {
+            for (int element = 0; element < table[row].length - LENGTH + 1; element++) {
                 if (!Cell.EMPTY.equals(table[row][element])) {
                     boolean isSame = true;
                     for (int count = 1; count < LENGTH; count++) {
@@ -220,6 +256,10 @@ public class Main {
         return State.GAMENOTFINISHED;
     }
 
+    /**
+     * Prints the playing field by System.out.
+     * @param table 
+     */
     public static void printTable(Cell[][] table){
         System.out.println("---------");
         for (Cell[] row : table){
