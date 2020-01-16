@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package gamelogic;
 
 /**
  * Represents all possible states of the playing field.
