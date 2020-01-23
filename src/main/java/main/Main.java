@@ -5,11 +5,8 @@
  */
 package main;
 
-import gamelogic.State;
-import gamelogic.Cell;
+import IO.InputManager;
 import gamelogic.GameManager;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
  *
@@ -17,70 +14,95 @@ import java.util.Scanner;
  */
 public class Main {
     
-    private static final String NINEWHITESPACES = "         ";
+    private static final String NINE_WHITE_SPACES = "         ";
+    
+    private static final char[] VALID_CHARACTERS_OF_MENU = {'1', '2', '3', '4'};
     
     public static void main(String[] args){
-        start();
+        startLoop();
     }
-    
-    private static void start(){
+
+    private static void startLoop() {
+        MenuOption menu = MenuOption.WELCOME_PAGE;
+        //i - scam variable
+        int i = 0;
+        while (i == 0) {
+            switch (menu) {
+                case WELCOME_PAGE:
+                    menu = welcome();
+                    break;
+                case GAME_PAGE:
+                    menu = game();
+                    break;
+                case HISTORY_PAGE:
+                    menu = history();
+                    break;
+                case CLOSE:
+                    System.exit(0);
+                    break;                    
+            }
+        }
+    }
+
+    private static MenuOption welcome() {
+        System.out.println("Welcome!");
+        System.out.println("What do you want? Enter \"1\" to go to the start page, enter \"2\" to start the game,"
+                + "enter \"3\" to view the game history, enter \"4\" to exit.");
+        char input = InputManager.readOneChar(VALID_CHARACTERS_OF_MENU);
+        switch (input) {
+            case '1':
+                return MenuOption.WELCOME_PAGE;
+            case '2':
+                return MenuOption.GAME_PAGE;
+            case '3':
+                return MenuOption.HISTORY_PAGE;
+            case '4':
+                return MenuOption.CLOSE;
+            default:
+                return null;
+        }
+    }
+
+    private static MenuOption game() {
         GameManager gameManager = GameManager.getInstance();
         gameManager.setLength(3);
-        gameManager.createPlayingField(NINEWHITESPACES, 3, 3);
+        gameManager.createPlayingField(NINE_WHITE_SPACES, 3, 3);
         gameManager.createGame().startGame();
         String result = gameManager.analyze().getString();
         System.out.println(result);
-    }
- 
-    /**
-     * Returns two int numbers belonging to the interval from lowerLimit to upperLimit.
-     * Numbers are read from System.in with the use java.util.Scanner.
-     * @param lowerLimit
-     * @param upperLimit
-     * @return two int numbers belonging to the interval from lowerLimit to upperLimit
-     */
-    public static int[] readTwoNumbersFromString(int lowerLimit, int upperLimit) {
-        Scanner sc = new Scanner(System.in);
-        int[] numbers = new int[2];
-        boolean validSecond = false;
-        boolean validFirst = false;
-        while (!validSecond && !validFirst) {
-            try {
-                System.out.print("Enter the coordinates: ");
-                numbers[0] = sc.nextInt();
-                validFirst = true;
-                numbers[1] = sc.nextInt();
-                validSecond = true;
-                if (numbers[0] < lowerLimit || numbers[0] > upperLimit
-                        || numbers[1] < lowerLimit || numbers[1] > upperLimit) {
-                    validFirst = false;
-                    validSecond = false;
-                    System.out.println("Coordinates should be from 1 to 3!");
-                }
-            } catch (NoSuchElementException e) {
-                System.out.println("You should enter numbers!");
-                validFirst = false;
-                validSecond = false;
-                sc.nextLine();
-            }
+        System.out.println("What do you want? Enter \"1\" to go to the start page, enter \"2\" to start the game,"
+                + "enter \"3\" to view the game history, enter \"4\" to exit.");
+        char input = InputManager.readOneChar(VALID_CHARACTERS_OF_MENU);
+        switch (input) {
+            case '1':
+                return MenuOption.WELCOME_PAGE;
+            case '2':
+                return MenuOption.GAME_PAGE;
+            case '3':
+                return MenuOption.HISTORY_PAGE;
+            case '4':
+                return MenuOption.CLOSE;
+            default:
+                return null;
         }
-        return numbers;
     }
 
-    /**
-     * Prints the playing field by System.out.
-     * @param table 
-     */
-    public static void printTable(Cell[][] table){
-        System.out.println("---------");
-        for (Cell[] row : table){
-            System.out.print("| ");
-            for (Cell column : row){
-                System.out.print(column.getChar());
-                System.out.print(" ");
-            }
-            System.out.println("|");
+    private static MenuOption history() {
+        System.out.println("Soon will be a history here =)");
+        System.out.println("What do you want? Enter \"1\" to go to the start page, enter \"2\" to start the game,"
+                + "enter \"3\" to view the game history, enter \"4\" to exit.");
+        char input = InputManager.readOneChar(VALID_CHARACTERS_OF_MENU);
+        switch (input) {
+            case '1':
+                return MenuOption.WELCOME_PAGE;
+            case '2':
+                return MenuOption.GAME_PAGE;
+            case '3':
+                return MenuOption.HISTORY_PAGE;
+            case '4':
+                return MenuOption.CLOSE;
+            default:
+                return null;
         }
-        System.out.println("---------");
     }
 }

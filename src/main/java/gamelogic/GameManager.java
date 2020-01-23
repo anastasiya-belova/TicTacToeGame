@@ -83,14 +83,14 @@ public class GameManager {
     /**
      * Sets element to field to the location with the specified coordinates. NB!
      * The coordinate values are not equal to the numbering of the elements in the array.
-     * Line numbering starts at the bottom with 1. Column numbering starts on the left with 1.
+     * Line numbering starts at the top with 1. Column numbering starts on the left with 1.
      * @param element
      * @param xCoordinate
      * @param yCoordinate
      * @return whether the element was set on the playing field
      */
     public boolean setElementToField(Cell element, int xCoordinate, int yCoordinate) {
-        int row = playingField.length - yCoordinate;
+        int row = yCoordinate - 1;
         int column = xCoordinate - 1;
         if (!Cell.EMPTY.equals(playingField[row][column])) {
             System.out.println("This cell is occupied! Choose another one!");
@@ -212,5 +212,21 @@ public class GameManager {
             return State.DRAW;
         }
         return State.GAMENOTFINISHED;
+    }
+    
+    /**
+     * Prints the playing field by System.out.
+     */
+    public void printTable(){
+        System.out.println("---------");
+        for (Cell[] row : playingField){
+            System.out.print("| ");
+            for (Cell column : row){
+                System.out.print(column.getChar());
+                System.out.print(" ");
+            }
+            System.out.println("|");
+        }
+        System.out.println("---------");
     }
 }

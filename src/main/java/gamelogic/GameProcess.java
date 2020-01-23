@@ -5,8 +5,7 @@
  */
 package gamelogic;
 
-import static main.Main.printTable;
-import static main.Main.readTwoNumbersFromString;
+import IO.InputManager;
 
 /**
  *
@@ -15,8 +14,6 @@ import static main.Main.readTwoNumbersFromString;
 public class GameProcess {
     
     private final GameManager gameManager;
-    //private final Player xPlayer;
-    //private final Player yPlayer;
     
     GameProcess(GameManager gameManager){
         this.gameManager = gameManager;
@@ -24,11 +21,11 @@ public class GameProcess {
     
     public void startGame() {
         boolean isXMove = true;
-        printTable(gameManager.getField());
+        gameManager.printTable();
         while (!gameManager.analyze().isFinal()) {
             boolean isSetted = false;
             while (!isSetted) {
-                int[] coordinates = readTwoNumbersFromString(1, 3);
+                int[] coordinates = InputManager.readTwoNumbersFromString(1, 3);
                 int x = coordinates[0];
                 int y = coordinates[1];
                 if (isXMove) {
@@ -43,7 +40,7 @@ public class GameProcess {
                     }
                 }
             }
-        printTable(gameManager.getField());
+        gameManager.printTable();
         }
     }
 }
