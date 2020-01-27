@@ -13,7 +13,6 @@
     <build>
         <outputDirectory>target/classes</outputDirectory>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <finalName>tictactoe</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -32,6 +31,9 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <outputDirectory>target</outputDirectory>
+                    <finalName>tictactoe</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>main.Main</mainClass>
