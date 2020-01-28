@@ -5,85 +5,102 @@
  */
 package gamelogic;
 
+import gamelogic.entity.State;
+import gamelogic.entity.Cell;
+
 /**
- * Singleton class. 
+ * Singleton class. Do not use this in a multithreading. This class stores the
+ * game settings (the size of playing field, the length of winning combination,
+ * etc.) and the current state of the playing field. This class also provides
+ * changes to the playing field and is able to analyze it.
+ *
  * @author Anastasiya Belova
  */
 public class GameManager {
-    
+
     private static final GameManager INSTANCE = new GameManager();
-    
-    private GameManager(){}
-    
-    public static GameManager getInstance(){
+
+    private GameManager() {
+    }
+
+    public static GameManager getInstance() {
         return INSTANCE;
     }
-    
-    private Cell[][] playingField;
-    
+
     private int lengthOfWinComb;
-    
+
+    private Cell[][] playingField;
+
+    private String startCondition;
+
+    private int fieldWidth;
+
+    private int fieldHeight;
+
     /**
      * Sets length of winning combination
-     * @param l - length of winning combination 
+     *
+     * @param l - length of winning combination
      */
-    public void setLength(int l){
+    public void setLengthOfWinComb(int l) {
         this.lengthOfWinComb = l;
     }
-    
+
     /**
-     * Returns the length of winning combination. 
+     * Returns the length of winning combination.
+     *
      * @return length of winning combination
      */
-    public int getLength(){
+    public int getLengthOfWinComb() {
         return this.lengthOfWinComb;
     }
-    
-    public Cell[][] getField(){
+
+    public void setField(Cell[][] playingField) {
+        this.playingField = playingField;
+    }
+
+    public Cell[][] getField() {
         return this.playingField;
     }
-    
-    public GameProcess createGame(){
+
+    public String getStartCondition() {
+        return this.startCondition;
+    }
+
+    public void setStartCondition(String startCondition) {
+        this.startCondition = startCondition;
+    }
+
+    public int getFieldWidth() {
+        return fieldWidth;
+    }
+
+    public void setFieldWidth(int fieldWidth) {
+        this.fieldWidth = fieldWidth;
+    }
+
+    public int getFieldHeight() {
+        return fieldHeight;
+    }
+
+    public void setFieldHeight(int fieldHeight) {
+        this.fieldHeight = fieldHeight;
+    }
+
+    public boolean isEndingCondition() {
+        return this.analyze().isFinal();
+    }
+
+    public GameProcess createGame() {
         return new GameProcess(INSTANCE);
     }
-    
-    /**
-     * Create a new playing field according to the specified values of width and height,
-     * as well as filled in in accordance with the transmitted string. For example, 
-     * when WIDTH = 3, HEIGHT = 3, str = "XO X OOXX", the constructed field will look
-     * like this: (X O  )(X   O)(O X X)
-     * @param str
-     * @param WIDTH
-     * @param HEIGHT
-     */
-    public void createPlayingField(String str, int WIDTH, int HEIGHT){
-        Cell[][] field;
-        char[] inputSymbols = str.toCharArray();
-        field = new Cell[WIDTH][HEIGHT];
-        int numOfChar = 0;
-        for (Cell[] row : field) {
-            for (int column = 0; column < row.length; column++) {
-                switch (inputSymbols[numOfChar]) {
-                    case 'X':
-                        row[column] = Cell.CROSS;
-                        break;
-                    case 'O':
-                        row[column] = Cell.ZERO;
-                        break;
-                    default:
-                        row[column] = Cell.EMPTY;
-                        break;
-                }
-                numOfChar++;
-            }
-        }
-        this.playingField = field;
-    }
-    
+
     /**
      * Sets element to field to the location with the specified coordinates. NB!
-     * The coordinate values are not equal to the numbering of the elements in the array.
-     * Line numbering starts at the top with 1. Column numbering starts on the left with 1.
+     * The coordinate values are not equal to the numbering of the elements in
+     * the array. Line numbering starts at the top with 1. Column numbering
+     * starts on the left with 1.
+     *
      * @param element
      * @param xCoordinate
      * @param yCoordinate
@@ -95,17 +112,17 @@ public class GameManager {
         if (!Cell.EMPTY.equals(playingField[row][column])) {
             System.out.println("This cell is occupied! Choose another one!");
             return false;
-        }
-        else{
+        } else {
             playingField[row][column] = element;
             return true;
         }
     }
-    
+
     /**
-     * Searches for whether there are winning combinations on the playing field, 
-     * checks the possibility of this combination appearing on the playing field.
-     * Returns the corresponding state of the playing field.
+     * Searches for whether there are winning combinations on the playing field,
+     * checks the possibility of this combination appearing on the playing
+     * field. Returns the corresponding state of the playing field.
+     *
      * @see State
      * @return state of the playing field
      */
@@ -131,7 +148,7 @@ public class GameManager {
             }
         }
         //checking the possibility of this combination appearing on the playing field
-        if (Math.abs(countZero-countCross) > 1){
+        if (Math.abs(countZero - countCross) > 1) {
             return State.IMPOSSIBLE;
         }
         //checking strings
@@ -142,10 +159,9 @@ public class GameManager {
                     for (int count = 1; count < lengthOfWinComb; count++) {
                         isSame = isSame && row[element].equals(row[element + count]);
                     }
-                    if (isSame && Cell.CROSS.equals(row[element])){
+                    if (isSame && Cell.CROSS.equals(row[element])) {
                         xWins = true;
-                    }
-                    else if (isSame && Cell.ZERO.equals(row[element])){
+                    } else if (isSame && Cell.ZERO.equals(row[element])) {
                         oWins = true;
                     }
                 }
@@ -157,12 +173,11 @@ public class GameManager {
                 if (!Cell.EMPTY.equals(playingField[row][element])) {
                     boolean isSame = true;
                     for (int count = 1; count < lengthOfWinComb; count++) {
-                        isSame = isSame && playingField[row][element].equals(playingField[row+count][element]);
+                        isSame = isSame && playingField[row][element].equals(playingField[row + count][element]);
                     }
-                    if (isSame && Cell.CROSS.equals(playingField[row][element])){
+                    if (isSame && Cell.CROSS.equals(playingField[row][element])) {
                         xWins = true;
-                    }
-                    else if (isSame && Cell.ZERO.equals(playingField[row][element])){
+                    } else if (isSame && Cell.ZERO.equals(playingField[row][element])) {
                         oWins = true;
                     }
                 }
@@ -201,27 +216,24 @@ public class GameManager {
         }
         if (xWins && oWins) {
             return State.IMPOSSIBLE;
-        }
-        else if(xWins){
+        } else if (xWins) {
             return State.XWINS;
-        }
-        else if(oWins){
+        } else if (oWins) {
             return State.OWINS;
-        }
-        else if(countEmpty == 0){
+        } else if (countEmpty == 0) {
             return State.DRAW;
         }
         return State.GAMENOTFINISHED;
     }
-    
+
     /**
      * Prints the playing field by System.out.
      */
-    public void printTable(){
+    public void printTable() {
         System.out.println("---------");
-        for (Cell[] row : playingField){
+        for (Cell[] row : playingField) {
             System.out.print("| ");
-            for (Cell column : row){
+            for (Cell column : row) {
                 System.out.print(column.getChar());
                 System.out.print(" ");
             }

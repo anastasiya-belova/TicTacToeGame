@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gamelogic;
+package gamelogic.entity;
 
 /**
  * Represents all possible elements of the playing field.
